@@ -8,7 +8,7 @@ export async function imageToBase64(uri: string): Promise<string> {
 }
 
 const GEMINI_KEY = process.env.EXPO_PUBLIC_GEMINI_KEY;
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
 
 export async function analyzeImage(base64Image: string, prompt: string): Promise<any> {
   const response = await fetch(GEMINI_URL, {

@@ -26,6 +26,8 @@ export default function ResultScreen() {
     try {
       const prompt = PROMPTS[promptKey] ?? PROMPTS.academic;
       const result = await analyzeImage(base64Image, prompt);
+      console.log("RAW GEMINI RESPONSE:", JSON.stringify(result, null, 2));
+
       const textPart = result?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!textPart) throw new Error("Empty response from Gemini");
       setAnalysis(JSON.parse(textPart));

@@ -10,9 +10,6 @@ export default function CameraScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  //to remove
-  console.log("KEY:", process.env.EXPO_PUBLIC_GEMINI_KEY);
-
   if (!permission) {
     return <View style={styles.container} />;
   }
