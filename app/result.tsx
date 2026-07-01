@@ -7,7 +7,7 @@ type Analysis = {
   objects: string[];
   context: string;
   activities: string;
-  recommendations: string;
+  recommendations: string | string[];
 };
 
 export default function ResultScreen() {
@@ -20,17 +20,25 @@ export default function ResultScreen() {
     runAnalysis();
   }, []);
 
+  function cleanJsonText(text: string): string {
+    return text
+      .trim()
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```\s*$/i, "")
+      .trim();
+  }
+
   async function runAnalysis() {
     setLoading(true);
     setError(null);
     try {
       const prompt = PROMPTS[promptKey] ?? PROMPTS.academic;
       const result = await analyzeImage(base64Image, prompt);
-      console.log("RAW GEMINI RESPONSE:", JSON.stringify(result, null, 2));
-
       const textPart = result?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!textPart) throw new Error("Empty response from Gemini");
-      setAnalysis(JSON.parse(textPart));
+      const cleaned = cleanJsonText(textPart);
+      setAnalysis(JSON.parse(cleaned));
     } catch (err) {
       console.log("ANALYZE ERROR:", err);
       setError("Could not analyze this image. Please try again.");
@@ -56,6 +64,8 @@ export default function ResultScreen() {
     );
   }
 
+  const recommendationsText = Array.isArray(analysis.recommendations) ? analysis.recommendations.join("\n\n") : analysis.recommendations;
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Objects</Text>
@@ -72,7 +82,7 @@ export default function ResultScreen() {
       <Text style={styles.bodyText}>{analysis.activities}</Text>
 
       <Text style={styles.sectionTitle}>Recommendations</Text>
-      <Text style={styles.bodyText}>{analysis.recommendations}</Text>
+      <Text style={styles.bodyText}>{recommendationsText}</Text>
     </View>
   );
 }
